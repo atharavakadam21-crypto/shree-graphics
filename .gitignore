@@ -1,0 +1,59 @@
+# =========================
+# Environment / secrets
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# Dependencies
+# =========================
+node_modules/
+**/node_modules/
+
+# =========================
+# Next.js
+# =========================
+frontend/.next/
+frontend/out/
+
+# =========================
+# Build output
+# =========================
+backend/dist/
+frontend/dist/
+
+# =========================
+# Logs
+# =========================
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# =========================
+# TypeScript
+# =========================
+*.tsbuildinfo
+frontend/next-env.d.ts
+
+# =========================
+# Vercel
+# =========================
+frontend/.vercel/
+
+# =========================
+# OS
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Temporary / recovery
+# =========================
+frontend/_cleanup-backup/
+frontend/homepage-all-sections.txt
+# Root-level accidental Node files
+/package.json
+/package-lock.json
