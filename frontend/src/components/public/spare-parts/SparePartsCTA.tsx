@@ -135,7 +135,7 @@ export default function SparePartsCTA() {
 
               <div className="divide-y divide-zinc-800">
                 <a
-                  href="tel:+919820698449"
+                  href="tel:+919820968449"
                   className="group flex min-h-20 items-center gap-4 px-6 transition-colors hover:bg-[#2E1A6B]/10"
                 >
                   <div className="flex h-11 w-11 items-center justify-center border border-[#2E1A6B]">

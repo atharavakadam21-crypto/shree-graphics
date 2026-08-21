@@ -54,28 +54,22 @@ export default function Header() {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      /*
-       * Keep the header visible near the top.
-       */
+      // Keep header visible near the top.
       if (currentScrollY <= 24) {
         setHidden(false);
         lastScrollY.current = currentScrollY;
         return;
       }
 
-      /*
-       * Never hide while mobile navigation is open.
-       */
+      // Never hide while mobile navigation is open.
       if (mobileOpen) {
         setHidden(false);
         lastScrollY.current = currentScrollY;
         return;
       }
 
-      /*
-       * Scroll down -> hide.
-       * Scroll up -> reveal.
-       */
+      // Scroll down -> hide.
+      // Scroll up -> reveal.
       if (currentScrollY > lastScrollY.current + 4) {
         setHidden(true);
       } else if (currentScrollY < lastScrollY.current - 4) {
@@ -119,41 +113,44 @@ export default function Header() {
       <div className="mx-auto flex min-h-[76px] max-w-7xl items-center justify-between px-5 sm:px-8 lg:min-h-[88px] lg:px-10">
 
         {/* =====================================================
-            LOGO
+            LOGO + BRAND
         ===================================================== */}
 
-       <Link
-  href="/"
-  onClick={() => setMobileOpen(false)}
-  className="group flex min-h-11 items-center gap-3"
->
-  <div
-    className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full border sm:h-12 sm:w-12"
-    style={{
-      borderColor: `${ORANGE}99`,
-      backgroundColor: NAVY,
-    }}
-  >
-    <Image
-      src="/logo/sg-logo.png"
-      alt="Shree Graphics"
-      fill
-      priority
-      sizes="48px"
-      className="object-contain"
-    />
-  </div>
+        <Link
+          href="/"
+          onClick={() => setMobileOpen(false)}
+          className="group flex min-h-11 items-center gap-3"
+          aria-label="Shree Graphics Home"
+        >
+          {/* Logo — visible on all screen sizes */}
+          <div
+            className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full border sm:h-12 sm:w-12"
+            style={{
+              borderColor: `${ORANGE}99`,
+              backgroundColor: NAVY,
+            }}
+          >
+            <Image
+              src="/logo/sg-logo.png"
+              alt="Shree Graphics"
+              fill
+              priority
+              sizes="(max-width: 639px) 44px, 48px"
+              className="object-contain"
+            />
+          </div>
 
-  <div className="hidden sm:block">
-    <div className="font-display text-lg font-black uppercase tracking-[0.08em] text-white">
-      Shree Graphics
-    </div>
+          {/* Brand text — hidden on mobile, visible from sm and above */}
+          <div className="hidden sm:block">
+            <div className="font-display text-lg font-black uppercase tracking-[0.08em] text-white">
+              Shree Graphics
+            </div>
 
-    <div className="mt-0.5 font-mono text-[7px] uppercase tracking-[0.2em] text-zinc-600">
-      Printing & Converting Machinery
-    </div>
-  </div>
-</Link>
+            <div className="mt-0.5 font-mono text-[7px] uppercase tracking-[0.2em] text-zinc-600">
+              Printing & Converting Machinery
+            </div>
+          </div>
+        </Link>
 
         {/* =====================================================
             DESKTOP NAV
@@ -188,7 +185,7 @@ export default function Header() {
         </nav>
 
         {/* =====================================================
-            PRIMARY CTA
+            DESKTOP ENQUIRE
         ===================================================== */}
 
         <Link
@@ -209,7 +206,7 @@ export default function Header() {
         </Link>
 
         {/* =====================================================
-            MOBILE MENU
+            MOBILE MENU BUTTON
         ===================================================== */}
 
         <button
@@ -236,9 +233,9 @@ export default function Header() {
         </button>
       </div>
 
-      {/* =======================================================
+      {/* =====================================================
           MOBILE NAV
-      ======================================================= */}
+      ===================================================== */}
 
       <div
         className={`overflow-hidden border-t transition-all duration-200 md:hidden ${

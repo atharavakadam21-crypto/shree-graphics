@@ -686,7 +686,7 @@ export default function HomeCTA() {
           {/* PHONE */}
 
           <a
-            href="tel:+919820698449"
+            href="tel:+919820968449"
             className="group flex min-h-[105px] items-center gap-4 border-b border-white/10 px-5 transition-colors hover:bg-white/[0.025] sm:px-7 lg:border-b-0 lg:border-r"
           >
 

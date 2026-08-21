@@ -1,4 +1,4 @@
-﻿const WHATSAPP_NUMBER = "919820698449";
+﻿const WHATSAPP_NUMBER = "919820968449";
 
 const openWhatsApp = (message: string) => {
   const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
@@ -55,7 +55,7 @@ export const assistantActions = [
     title: "Call US",
     description: "Speak directly with the Shree Graphics team.",
     action: () => {
-      window.location.href = "tel:+919820698449";
+      window.location.href = "tel:+919820968449";
     },
   },
   {
