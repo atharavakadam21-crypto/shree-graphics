@@ -1,55 +1,6 @@
-import ScrollReveal from "@/components/public/ScrollReveal";
-import SectionLabel from "@/components/ui/SectionLabel";
-
-export default function ContactHero() {
-  return (
-    <section className="relative min-h-[70svh] overflow-hidden border-b border-zinc-900 bg-[#060606]">
-      <div className="pointer-events-none absolute inset-0 opacity-[0.12]">
-        <div
-          className="h-full w-full"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.08) 1px, transparent 1px)",
-            backgroundSize: "80px 80px",
-          }}
-        />
-      </div>
-
-      <div className="relative mx-auto flex min-h-[70svh] max-w-[1600px] items-end px-5 pb-14 pt-32 sm:px-8 lg:px-12 lg:pb-20">
-        <div className="grid w-full gap-12 lg:grid-cols-[1fr_360px] lg:items-end">
-          <ScrollReveal>
-            <SectionLabel number="01">
-              Contact / Engineering enquiry
-            </SectionLabel>
-
-            <h1 className="mt-9 max-w-6xl text-6xl font-semibold uppercase leading-[0.78] tracking-[-0.07em] text-white sm:text-7xl lg:text-8xl">
-              Let's build
-              <br />
-              the right
-              <br />
-              system.
-            </h1>
-          </ScrollReveal>   
-
-          <ScrollReveal delay={140}>
-            <div className="border-l-2 border-cyan-500 pl-5">
-              <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-zinc-600">
-                SG / ENQUIRY CHANNEL
-              </p>
-
-              <p className="mt-5 text-sm leading-7 text-zinc-400">
-                Tell us about your production requirement, material,
-                application or machine requirement. Our team can
-                discuss the appropriate system with you.
-              </p>
-
-              <div className="mt-7 font-mono text-[9px] uppercase tracking-[0.18em] text-zinc-700">
-                RESPONSE / DIRECT
-              </div>
-            </div>
-          </ScrollReveal>   
-        </div>
-      </div>
-    </section>
-  );
-}
+"use client";
+import { motion } from "framer-motion";
+import Badge from "@/components/public/ui/Badge";
+import Container from "@/components/public/ui/Container";
+import GlassCard from "@/components/public/ui/GlassCard";
+export default function ContactHero(){return <section className="relative isolate overflow-hidden bg-[#0B1220] pb-20 pt-32 sm:pt-40"><div aria-hidden className="absolute -left-28 top-8 h-[32rem] w-[32rem] rounded-full bg-[#4274D9]/22 blur-[150px]"/><div aria-hidden className="absolute right-0 bottom-0 h-[24rem] w-[24rem] rounded-full bg-[#95CCDD]/10 blur-[130px]"/><Container className="relative z-10 grid min-h-[58svh] items-end gap-12 lg:grid-cols-[1fr_390px]"><motion.div initial={{opacity:0,y:28}} animate={{opacity:1,y:0}} transition={{duration:.7}}><Badge>Contact / engineering enquiry</Badge><h1 className="mt-6 max-w-5xl font-display text-6xl font-black leading-[.9] tracking-[-.055em] sm:text-7xl lg:text-8xl">Let&apos;s build the right <span className="bg-gradient-to-r from-[#95CCDD] to-[#4274D9] bg-clip-text text-transparent">system.</span></h1></motion.div><motion.div initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} transition={{duration:.7,delay:.1}}><GlassCard className="rounded-3xl p-7"><p className="text-[10px] uppercase tracking-[.18em] text-[#95CCDD]">SG / Enquiry channel</p><p className="mt-5 leading-8 text-slate-300">Tell us about your production requirement, material, application or machine requirement. Our team can discuss the appropriate system with you.</p><p className="mt-7 border-t border-white/10 pt-5 text-[10px] uppercase tracking-[.18em] text-slate-500">Response / Direct</p></GlassCard></motion.div></Container></section>}
