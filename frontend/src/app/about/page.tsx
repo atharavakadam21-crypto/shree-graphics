@@ -1,3 +1,5 @@
+import Header from "@/components/public/Header";
+import Footer from "@/components/public/Footer";
 import AboutHero from "@/components/public/about/AboutHero";
 import AboutCTA from "@/components/public/about/AboutCTA";
 import CapabilitiesStrip from "@/components/public/about/CapabilitiesStrip";
@@ -12,12 +14,14 @@ export const metadata = {
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen overflow-x-hidden bg-[#060606]">
+    <main className="min-h-screen overflow-x-hidden bg-[#0B1220] text-zinc-100">
+      <Header />
       <AboutHero />
       <CompanyStory />
       <EngineeringApproach />
       <CapabilitiesStrip />
       <AboutCTA />
+      <Footer />
     </main>
   );
 }
