@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 type ContainerProps<T extends ElementType> = {
   as?: T;
-  children: ReactNode;
+  children?: ReactNode;
 } & Omit<ComponentPropsWithoutRef<T>, "as" | "children">;
 
 export default function Container<T extends ElementType = "div">({
@@ -13,12 +13,5 @@ export default function Container<T extends ElementType = "div">({
   ...props
 }: ContainerProps<T>) {
   const Component = (as ?? "div") as ElementType;
-  return (
-    <Component
-      className={cn("mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-10", className)}
-      {...props}
-    >
-      {children}
-    </Component>
-  );
+  return <Component {...props} className={cn("mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-10", className)}>{children}</Component>;
 }
