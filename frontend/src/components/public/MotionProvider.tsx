@@ -8,19 +8,17 @@ export default function MotionProvider({ children }: { children: ReactNode }) {
     let frame = 0;
     let cleanup: (() => void) | undefined;
 
-    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (media.matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     void import("lenis").then(({ default: Lenis }) => {
       if (cancelled) return;
 
       const lenis = new Lenis({
-        lerp: 0.075,
-        duration: 1.15,
+        lerp: 0.1,
         smoothWheel: true,
         syncTouch: false,
-        wheelMultiplier: 0.9,
-        touchMultiplier: 1.25,
+        wheelMultiplier: 1,
+        touchMultiplier: 1,
       });
 
       const raf = (time: number) => {
