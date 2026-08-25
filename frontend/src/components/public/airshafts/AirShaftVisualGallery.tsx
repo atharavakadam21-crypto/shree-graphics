@@ -1,13 +1,12 @@
 "use client";
 
-import Image from "next/image";
 import ScrollReveal from "@/components/public/ScrollReveal";
 import Container from "@/components/public/ui/Container";
 
 const visuals = [
-  { src: "/images/airshafts/airshaft-standard.svg", title: "Airshaft construction", text: "A visual overview of the shaft assembly and expanding elements." },
-  { src: "/images/airshafts/airshaft-differential.svg", title: "Differential configuration", text: "A configuration suited to controlled multi-roll winding applications." },
-  { src: "/images/airshafts/airshaft-keyed.svg", title: "Keyed configuration", text: "A precision-oriented shaft arrangement for secure roll handling." },
+  { src: "data:image/webp;base64,UklGRsQPAABXRUJQVlA4WAoAAAAQAAAASwEAAJoAAAABAA==", title: "Airshaft Construction", text: "Precision engineered pneumatic airshaft assembly for secure roll clamping and web handling." },
+  { src: "data:image/webp;base64,UklGRsQPAABXRUJQVlA4WAoAAAAQAAAASwEAAJoAAAABAA==", title: "Differential Airshaft", text: "Multi-section differential configuration for controlled winding and independent roll tension." },
+  { src: "data:image/webp;base64,UklGRsQPAABXRUJQVlA4WAoAAAAQAAAASwEAAJoAAAABAA==", title: "Keyed Airshaft", text: "Keyed shaft configuration designed for positive torque transmission and secure roll handling." },
 ];
 
 export default function AirShaftVisualGallery() {
@@ -22,12 +21,12 @@ export default function AirShaftVisualGallery() {
         <div className="mt-12 grid gap-5 lg:grid-cols-3">
           {visuals.map((visual, index) => (
             <ScrollReveal key={visual.title} delay={index * 90}>
-              <article className="group overflow-hidden rounded-3xl border border-white/10 bg-[#0B1220]/70 p-4 backdrop-blur-xl transition hover:-translate-y-1 hover:border-[#95CCDD]/35">
-                <div className="relative aspect-[12/5] overflow-hidden rounded-2xl border border-white/8 bg-[#08101F]">
-                  <Image src={visual.src} alt={visual.title} fill sizes="(max-width: 1024px) 100vw, 33vw" className="object-contain p-3 transition duration-500 group-hover:scale-105" />
+              <article className="group overflow-hidden rounded-3xl border border-white/10 bg-[#13213A] p-4 shadow-[0_20px_70px_rgba(0,0,0,.18)] backdrop-blur-xl transition hover:-translate-y-1 hover:border-[#F36A21]/55">
+                <div className="aspect-[12/5] overflow-hidden rounded-2xl border border-[#95CCDD]/15 bg-[#0B1220]">
+                  <img src={visual.src} alt={visual.title} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
                 </div>
                 <h3 className="mt-5 text-lg font-semibold text-white">{visual.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-400">{visual.text}</p>
+                <p className="mt-2 text-sm leading-6 text-slate-300">{visual.text}</p>
               </article>
             </ScrollReveal>
           ))}
