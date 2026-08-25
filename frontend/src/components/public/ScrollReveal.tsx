@@ -13,22 +13,18 @@ export default function ScrollReveal({
   children,
   delay = 0,
   className = "",
-  distance = 24,
+  distance = 32,
 }: ScrollRevealProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
-  const [reduceMotion, setReduceMotion] = useState(false);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const updateMotionPreference = () => setReduceMotion(media.matches);
-    updateMotionPreference();
-    media.addEventListener("change", updateMotionPreference);
-
     const element = ref.current;
+
     if (!element || media.matches) {
       setIsVisible(true);
-      return () => media.removeEventListener("change", updateMotionPreference);
+      return;
     }
 
     const observer = new IntersectionObserver(
@@ -37,18 +33,11 @@ export default function ScrollReveal({
         setIsVisible(true);
         observer.unobserve(entry.target);
       },
-      {
-        threshold: 0.08,
-        rootMargin: "0px 0px -8% 0px",
-      }
+      { threshold: 0.08, rootMargin: "0px 0px -4% 0px" }
     );
 
     observer.observe(element);
-
-    return () => {
-      observer.disconnect();
-      media.removeEventListener("change", updateMotionPreference);
-    };
+    return () => observer.disconnect();
   }, []);
 
   return (
@@ -56,15 +45,9 @@ export default function ScrollReveal({
       ref={ref}
       className={`will-change-transform ${className}`}
       style={{
-        opacity: isVisible || reduceMotion ? 1 : 0,
-        transform:
-          isVisible || reduceMotion
-            ? "translate3d(0, 0, 0) scale(1)"
-            : `translate3d(0, ${distance}px, 0) scale(0.985)`,
-        transitionProperty: "opacity, transform",
-        transitionDuration: "900ms",
-        transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
-        transitionDelay: `${delay}ms`,
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? "translateY(0)" : `translateY(${distance}px)`,
+        transition: `opacity 700ms cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms, transform 700ms cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms`,
       }}
     >
       {children}
