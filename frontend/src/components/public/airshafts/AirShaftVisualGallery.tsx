@@ -4,9 +4,21 @@ import ScrollReveal from "@/components/public/ScrollReveal";
 import Container from "@/components/public/ui/Container";
 
 const visuals = [
-  { src: "data:image/webp;base64,UklGRsQPAABXRUJQVlA4WAoAAAAQAAAASwEAAJoAAAABAA==", title: "Airshaft Construction", text: "Precision engineered pneumatic airshaft assembly for secure roll clamping and web handling." },
-  { src: "data:image/webp;base64,UklGRsQPAABXRUJQVlA4WAoAAAAQAAAASwEAAJoAAAABAA==", title: "Differential Airshaft", text: "Multi-section differential configuration for controlled winding and independent roll tension." },
-  { src: "data:image/webp;base64,UklGRsQPAABXRUJQVlA4WAoAAAAQAAAASwEAAJoAAAABAA==", title: "Keyed Airshaft", text: "Keyed shaft configuration designed for positive torque transmission and secure roll handling." },
+  {
+    src: "https://shopcdnpro.grainajz.com/category/483259/4306/0d5b609e907be16624ce4f13e05a8dad/shaft213.jpg",
+    title: "Airshaft Construction",
+    text: "A real pneumatic expanding airshaft with the body, expansion mechanism and journals visible.",
+  },
+  {
+    src: "https://www.convertech.com/images/products/Differential_Air_Shaft-full.webp",
+    title: "Differential Airshaft",
+    text: "A real differential airshaft with multiple friction sections for controlled multi-roll winding.",
+  },
+  {
+    src: "https://www.jctprinting.com/Uploads/products/2018-09-19/en-qqs--13-.jpg",
+    title: "Keyed Airshaft",
+    text: "A real key-type pneumatic airshaft showing the longitudinal keyed expansion design.",
+  },
 ];
 
 export default function AirShaftVisualGallery() {
