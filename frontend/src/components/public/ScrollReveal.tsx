@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 
 interface ScrollRevealProps {
   children: ReactNode;
@@ -13,7 +13,7 @@ export default function ScrollReveal({
   children,
   delay = 0,
   className = "",
-  distance = 32,
+  distance = 28,
 }: ScrollRevealProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -22,29 +22,19 @@ export default function ScrollReveal({
     const element = ref.current;
     if (!element) return;
 
-    // Public pages intentionally use scroll-triggered reveals even if the
-    // browser reports a reduced-motion preference. This keeps the site's
-    // designed reveal behavior consistent across environments.
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (!entry?.isIntersecting) return;
-
-        window.setTimeout(() => {
-          setIsVisible(true);
-        }, delay);
-
-        observer.unobserve(entry.target);
+        setIsVisible(entry.isIntersecting);
       },
       {
-        // A section must actually enter the visible viewport before revealing.
-        threshold: 0.15,
-        rootMargin: "0px 0px -15% 0px",
+        threshold: 0.1,
+        rootMargin: "0px 0px -10% 0px",
       }
     );
 
     observer.observe(element);
     return () => observer.disconnect();
-  }, [delay]);
+  }, []);
 
   return (
     <div
@@ -53,9 +43,12 @@ export default function ScrollReveal({
       style={{
         opacity: isVisible ? 1 : 0,
         transform: isVisible
-          ? "translate3d(0, 0, 0)"
-          : `translate3d(0, ${distance}px, 0)`,
-        transition: "opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1)",
+          ? "translate3d(0, 0, 0) scale(1)"
+          : `translate3d(0, ${distance}px, 0) scale(0.995)`,
+        transitionProperty: "opacity, transform",
+        transitionDuration: "560ms",
+        transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
+        transitionDelay: isVisible ? `${delay}ms` : "0ms",
       }}
     >
       {children}
