@@ -1,28 +1,54 @@
 "use client";
 
-import { Bot } from "lucide-react";
+import Image from "next/image";
+import { PointerEvent, useEffect, useRef, useState } from "react";
 
-interface AssistantButtonProps {
-  onClick?: () => void;
-  label?: string;
-}
+interface AssistantButtonProps { onClick?: () => void; label?: string; }
+type Position = { x: number; y: number };
 
 export default function AssistantButton({ onClick, label = "Shree AI" }: AssistantButtonProps) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label="Open Shree AI assistant"
-      className="group fixed bottom-5 right-5 z-[100] flex items-center gap-3 rounded-full border border-white/15 bg-[#0B1220]/90 px-3 py-3 text-left shadow-[0_18px_55px_rgba(0,0,0,.35)] backdrop-blur-2xl transition-all duration-300 hover:-translate-y-1 hover:border-[#95CCDD]/60 hover:shadow-[0_20px_65px_rgba(66,116,217,.25)] sm:bottom-7 sm:right-7"
-    >
-      <span className="relative grid h-11 w-11 place-items-center rounded-full border border-[#95CCDD]/45 bg-gradient-to-br from-[#4274D9] to-[#1D315E] text-white shadow-inner shadow-white/10">
-        <Bot size={20} strokeWidth={1.8} />
-        <span className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-2 border-[#0B1220] bg-[#95CCDD]" />
-      </span>
-      <span className="hidden pr-2 sm:block">
-        <span className="block text-[9px] font-semibold uppercase tracking-[.18em] text-[#95CCDD]">Engineering assistant</span>
-        <span className="mt-0.5 block text-sm font-semibold text-white">{label}</span>
-      </span>
-    </button>
-  );
+  const [position, setPosition] = useState<Position>({ x: 0, y: 0 });
+  const [ready, setReady] = useState(false);
+  const dragStart = useRef<{ pointerX: number; pointerY: number; x: number; y: number } | null>(null);
+  const moved = useRef(false);
+
+  useEffect(() => {
+    const initial = { x: Math.max(16, window.innerWidth - 96), y: Math.max(88, window.innerHeight - 96) };
+    setPosition(initial);
+    setReady(true);
+  }, []);
+
+  const clamp = (x: number, y: number): Position => ({
+    x: Math.min(Math.max(12, x), Math.max(12, window.innerWidth - 84)),
+    y: Math.min(Math.max(76, y), Math.max(76, window.innerHeight - 84)),
+  });
+
+  const onPointerDown = (event: PointerEvent<HTMLButtonElement>) => {
+    event.currentTarget.setPointerCapture(event.pointerId);
+    moved.current = false;
+    dragStart.current = { pointerX: event.clientX, pointerY: event.clientY, x: position.x, y: position.y };
+  };
+
+  const onPointerMove = (event: PointerEvent<HTMLButtonElement>) => {
+    if (!dragStart.current) return;
+    const dx = event.clientX - dragStart.current.pointerX;
+    const dy = event.clientY - dragStart.current.pointerY;
+    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) moved.current = true;
+    setPosition(clamp(dragStart.current.x + dx, dragStart.current.y + dy));
+  };
+
+  const onPointerUp = (event: PointerEvent<HTMLButtonElement>) => {
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+    dragStart.current = null;
+    if (!moved.current) onClick?.();
+  };
+
+  if (!ready) return null;
+  return <button type="button" aria-label={`Open ${label}`} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} style={{ left: position.x, top: position.y }} className="fixed z-[100] grid h-[72px] w-[72px] touch-none place-items-center rounded-full border border-[#95CCDD]/55 bg-[#0B1220]/95 p-2 shadow-[0_16px_50px_rgba(0,0,0,.45)] backdrop-blur-2xl transition-[box-shadow,border-color] duration-200 hover:border-white hover:shadow-[0_18px_60px_rgba(66,116,217,.38)]">
+    <span className="absolute inset-1 rounded-full border border-white/10" />
+    <span className="relative block h-full w-full overflow-hidden rounded-full bg-white/5">
+      <Image src="/logo/sg-logo.png" alt="Shree Graphics" fill sizes="56px" className="object-contain p-1.5" draggable={false} priority />
+    </span>
+    <span className="absolute -right-0.5 -top-0.5 h-3.5 w-3.5 rounded-full border-2 border-[#0B1220] bg-[#95CCDD]" />
+  </button>;
 }
