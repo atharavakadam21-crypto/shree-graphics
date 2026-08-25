@@ -1,6 +1,7 @@
 "use client";
 
-import { ReactNode, useEffect, useRef, useState } from "react";
+import type { ReactNode } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 
 interface ScrollRevealProps {
   children: ReactNode;
@@ -15,51 +16,21 @@ export default function ScrollReveal({
   className = "",
   distance = 36,
 }: ScrollRevealProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const element = ref.current;
-    if (!element) return;
-
-    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (media.matches) {
-      setIsVisible(true);
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        if (!entry?.isIntersecting) return;
-
-        setIsVisible(true);
-        observer.unobserve(entry.target);
-      },
-      {
-        threshold: 0.12,
-        rootMargin: "0px 0px -12% 0px",
-      }
-    );
-
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, []);
+  const shouldReduceMotion = useReducedMotion();
 
   return (
-    <div
-      ref={ref}
-      className={`will-change-[opacity,transform] ${className}`}
-      style={{
-        opacity: isVisible ? 1 : 0,
-        transform: isVisible ? "translate3d(0,0,0)" : `translate3d(0,${distance}px,0)`,
-        transitionProperty: "opacity, transform",
-        transitionDuration: "800ms",
-        transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
-        transitionDelay: `${delay}ms`,
+    <motion.div
+      className={className}
+      initial={shouldReduceMotion ? false : { opacity: 0, y: distance }}
+      whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2, margin: "0px 0px -8% 0px" }}
+      transition={{
+        duration: 0.72,
+        delay: delay / 1000,
+        ease: [0.22, 1, 0.36, 1],
       }}
     >
       {children}
-    </div>
+    </motion.div>
   );
 }
