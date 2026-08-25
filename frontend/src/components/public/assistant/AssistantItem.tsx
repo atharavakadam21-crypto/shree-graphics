@@ -1,6 +1,20 @@
-﻿"use client";
+"use client";
+
+import type { ComponentType } from "react";
+import { ArrowUpRight, Boxes, Cpu, Info, MessageCircle, Phone, Search, Wrench } from "lucide-react";
+
+const icons: Record<string, ComponentType<{ size?: number; strokeWidth?: number }>> = {
+  finder: Search,
+  products: Boxes,
+  parts: Wrench,
+  engineer: Cpu,
+  whatsapp: MessageCircle,
+  call: Phone,
+  about: Info,
+};
 
 interface AssistantItemProps {
+  id?: string;
   number: string;
   title: string;
   description: string;
@@ -8,40 +22,20 @@ interface AssistantItemProps {
   accent?: boolean;
 }
 
-export default function AssistantItem({
-  number,
-  title,
-  description,
-  onClick,
-  accent = false,
-}: AssistantItemProps) {
+export default function AssistantItem({ id = "", number, title, description, onClick, accent = false }: AssistantItemProps) {
+  const Icon = icons[id] ?? Cpu;
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="group flex min-h-[72px] w-full items-center gap-4 border-b border-zinc-800 px-5 py-4 text-left transition-colors hover:border-zinc-700 hover:bg-white/[0.025]"
-    >
-      <span
-        className={`font-mono text-[9px] ${
-          accent ? "text-cyan-400" : "text-zinc-700"
-        }`}
-      >
-        {number}
+    <button type="button" onClick={onClick} className={`group relative flex w-full items-center gap-3 border-b border-white/[0.07] px-4 py-3.5 text-left transition-all duration-300 last:border-b-0 hover:bg-white/[0.035] sm:gap-4 sm:px-5 sm:py-4 ${accent ? "bg-[#4274D9]/[0.045]" : ""}`}>
+      <span className={`absolute bottom-0 left-0 top-0 w-[2px] transition-transform duration-300 ${accent ? "scale-y-100 bg-[#F36A21]" : "scale-y-0 bg-[#4274D9] group-hover:scale-y-100"}`} />
+      <span className="hidden w-5 shrink-0 font-mono text-[8px] tracking-[.08em] text-[#95CCDD]/55 sm:block">{number}</span>
+      <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl border transition-all duration-300 sm:h-11 sm:w-11 ${accent ? "border-[#F36A21]/45 bg-[#F36A21]/10 text-[#F36A21]" : "border-[#95CCDD]/20 bg-[#0B1220]/55 text-[#95CCDD] group-hover:border-[#4274D9]/60 group-hover:bg-[#4274D9]/10"}`}>
+        <Icon size={17} strokeWidth={1.8} />
       </span>
-
       <span className="min-w-0 flex-1">
-        <span className="block text-xs font-medium uppercase tracking-[0.08em] text-zinc-200 transition-colors group-hover:text-white">
-          {title}
-        </span>
-
-        <span className="mt-1 block text-[11px] leading-5 text-zinc-600">
-          {description}
-        </span>
+        <span className="block text-[11px] font-semibold uppercase tracking-[0.07em] text-slate-100 transition-colors group-hover:text-white sm:text-xs">{title}</span>
+        <span className="mt-1 block line-clamp-2 text-[10px] leading-4 text-slate-500 sm:text-[11px] sm:leading-5">{description}</span>
       </span>
-
-      <span className="text-zinc-700 transition-all group-hover:translate-x-1 group-hover:text-cyan-400">
-        →
-      </span>
+      <ArrowUpRight size={16} className="shrink-0 text-[#95CCDD]/40 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-[#F36A21]" />
     </button>
   );
 }
