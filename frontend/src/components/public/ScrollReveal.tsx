@@ -13,11 +13,10 @@ export default function ScrollReveal({
   children,
   delay = 0,
   className = "",
-  distance = 20,
+  distance = 18,
 }: ScrollRevealProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
-  const visibleRef = useRef(false);
 
   useEffect(() => {
     const element = ref.current;
@@ -25,15 +24,12 @@ export default function ScrollReveal({
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        const nextVisible = entry.intersectionRatio > 0.06;
-        if (visibleRef.current === nextVisible) return;
-
-        visibleRef.current = nextVisible;
-        setIsVisible(nextVisible);
+        const shouldShow = entry.intersectionRatio >= 0.08;
+        setIsVisible((current) => (current === shouldShow ? current : shouldShow));
       },
       {
-        threshold: [0, 0.06, 0.12, 0.25],
-        rootMargin: "0px 0px -4% 0px",
+        threshold: [0, 0.08, 0.2],
+        rootMargin: "0px 0px -6% 0px",
       }
     );
 
@@ -47,10 +43,12 @@ export default function ScrollReveal({
       className={`transform-gpu will-change-[opacity,transform] ${className}`}
       style={{
         opacity: isVisible ? 1 : 0,
-        transform: isVisible
-          ? "translate3d(0, 0, 0)"
-          : `translate3d(0, ${distance}px, 0)`,
-        transition: `opacity 480ms cubic-bezier(0.22, 1, 0.36, 1) ${isVisible ? delay : 0}ms, transform 620ms cubic-bezier(0.22, 1, 0.36, 1) ${isVisible ? delay : 0}ms`,
+        transform: isVisible ? "translate3d(0,0,0)" : `translate3d(0,${distance}px,0)`,
+        transitionProperty: "opacity, transform",
+        transitionDuration: "420ms, 760ms",
+        transitionTimingFunction: "ease-out, cubic-bezier(0.22, 1, 0.36, 1)",
+        transitionDelay: isVisible ? `${delay}ms, ${delay}ms` : "0ms, 0ms",
+        backfaceVisibility: "hidden",
       }}
     >
       {children}
