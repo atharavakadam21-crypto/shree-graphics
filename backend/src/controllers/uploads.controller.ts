@@ -3,234 +3,66 @@ import { supabase } from '../config/supabase.js';
 
 const MACHINE_BUCKET_NAME = 'machine-images';
 const AIR_SHAFT_BUCKET_NAME = 'airshaft-images';
-
-const ALLOWED_TYPES = new Set([
-  'image/jpeg',
-  'image/png',
-  'image/webp',
-  'image/avif'
-]);
-
-const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const GALLERY_BUCKET_NAME = 'gallery-media';
+const IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/avif']);
+const GALLERY_TYPES = new Set([...IMAGE_TYPES, 'video/mp4', 'video/webm', 'video/quicktime']);
+const MAX_FILE_SIZE = 100 * 1024 * 1024;
 const MAX_FILES = 10;
 
-const createSafeFileName = (
-  originalName: string
-): string => {
-  return (
-    originalName
-      .replace(/\.[^/.]+$/, '')
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '') || 'image'
-  );
-};
+const safeName = (name: string): string => name.replace(/\.[^/.]+$/, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'media';
+const extension = (name: string): string => name.split('.').pop()?.toLowerCase() ?? 'jpg';
 
-const getExtension = (
-  originalName: string
-): string => {
-  return (
-    originalName
-      .split('.')
-      .pop()
-      ?.toLowerCase() ?? 'jpg'
-  );
-};
-
-const validateFiles = (
-  files: Express.Multer.File[] | undefined
-): string | null => {
-  if (!files || files.length === 0) {
-    return 'No images were uploaded';
-  }
-
-  if (files.length > MAX_FILES) {
-    return `Maximum ${MAX_FILES} images can be uploaded at once`;
-  }
-
+const validateFiles = (files: Express.Multer.File[] | undefined, allowed: Set<string>, label: string): string | null => {
+  if (!files?.length) return `No ${label} were uploaded`;
+  if (files.length > MAX_FILES) return `Maximum ${MAX_FILES} files can be uploaded at once`;
   for (const file of files) {
-    if (!ALLOWED_TYPES.has(file.mimetype)) {
-      return `Unsupported image type: ${file.mimetype}`;
-    }
-
-    if (file.size > MAX_FILE_SIZE) {
-      return `${file.originalname} exceeds the 10MB limit`;
-    }
+    if (!allowed.has(file.mimetype)) return `Unsupported file type: ${file.mimetype}`;
+    if (file.size > MAX_FILE_SIZE) return `${file.originalname} exceeds the 100MB limit`;
   }
-
   return null;
 };
 
-const uploadImages = async (
-  files: Express.Multer.File[],
-  bucketName: string,
-  folderName: string
-): Promise<string[]> => {
-  const uploadedImages: string[] = [];
-
+const uploadFiles = async (files: Express.Multer.File[], bucket: string, folder: string): Promise<Array<{ url: string; media_type: 'image' | 'video' }>> => {
+  const uploaded: Array<{ url: string; media_type: 'image' | 'video' }> = [];
   for (const file of files) {
-    const extension = getExtension(
-      file.originalname
-    );
-
-    const safeName = createSafeFileName(
-      file.originalname
-    );
-
-    const uniqueName = `${Date.now()}-${Math.random()
-      .toString(36)
-      .slice(2, 8)}`;
-
-    const filePath =
-      `${folderName}/${uniqueName}-${safeName}.${extension}`;
-
-    const { error: uploadError } =
-      await supabase.storage
-        .from(bucketName)
-        .upload(
-          filePath,
-          file.buffer,
-          {
-            contentType: file.mimetype,
-            upsert: false
-          }
-        );
-
-    if (uploadError) {
-      console.error(
-        `Supabase ${folderName} image upload failed:`,
-        uploadError
-      );
-
-      throw new Error(
-        `Failed to upload image: ${file.originalname}`
-      );
-    }
-
-    const {
-      data: publicUrlData
-    } = supabase.storage
-      .from(bucketName)
-      .getPublicUrl(filePath);
-
-    uploadedImages.push(
-      publicUrlData.publicUrl
-    );
+    const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${safeName(file.originalname)}.${extension(file.originalname)}`;
+    const { error } = await supabase.storage.from(bucket).upload(path, file.buffer, { contentType: file.mimetype, upsert: false });
+    if (error) throw new Error(`Failed to upload ${file.originalname}`);
+    const { data } = supabase.storage.from(bucket).getPublicUrl(path);
+    uploaded.push({ url: data.publicUrl, media_type: file.mimetype.startsWith('video/') ? 'video' : 'image' });
   }
-
-  return uploadedImages;
+  return uploaded;
 };
 
-/**
- * POST /api/uploads/machine-images
- *
- * Admin only.
- */
-export const uploadMachineImages = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const uploadMachineImages = async (req: Request, res: Response): Promise<void> => {
   try {
-    const files = req.files as
-      | Express.Multer.File[]
-      | undefined;
-
-    const validationError =
-      validateFiles(files);
-
-    if (validationError) {
-      res.status(400).json({
-        success: false,
-        message: validationError
-      });
-
-      return;
-    }
-
-    const uploadedImages =
-      await uploadImages(
-        files!,
-        MACHINE_BUCKET_NAME,
-        'machines'
-      );
-
-    res.status(201).json({
-      success: true,
-      message:
-        'Machine images uploaded successfully',
-      data: {
-        images: uploadedImages
-      }
-    });
-  } catch (error) {
-    console.error(
-      'Machine image upload error:',
-      error
-    );
-
-    res.status(500).json({
-      success: false,
-      message:
-        error instanceof Error
-          ? error.message
-          : 'Internal server error'
-    });
-  }
+    const files = req.files as Express.Multer.File[] | undefined;
+    const error = validateFiles(files, IMAGE_TYPES, 'images');
+    if (error) { res.status(400).json({ success: false, message: error }); return; }
+    const items = await uploadFiles(files!, MACHINE_BUCKET_NAME, 'machines');
+    res.status(201).json({ success: true, data: { images: items.map((item) => item.url) } });
+  } catch (error) { res.status(500).json({ success: false, message: error instanceof Error ? error.message : 'Internal server error' }); }
 };
 
-/**
- * POST /api/uploads/airshaft-images
- *
- * Admin only.
- */
-export const uploadAirShaftImages = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const uploadAirShaftImages = async (req: Request, res: Response): Promise<void> => {
   try {
-    const files = req.files as
-      | Express.Multer.File[]
-      | undefined;
+    const files = req.files as Express.Multer.File[] | undefined;
+    const error = validateFiles(files, IMAGE_TYPES, 'images');
+    if (error) { res.status(400).json({ success: false, message: error }); return; }
+    const items = await uploadFiles(files!, AIR_SHAFT_BUCKET_NAME, 'airshafts');
+    res.status(201).json({ success: true, data: { images: items.map((item) => item.url) } });
+  } catch (error) { res.status(500).json({ success: false, message: error instanceof Error ? error.message : 'Internal server error' }); }
+};
 
-    const validationError =
-      validateFiles(files);
-
-    if (validationError) {
-      res.status(400).json({
-        success: false,
-        message: validationError
-      });
-
-      return;
-    }
-
-    const uploadedImages =
-      await uploadImages(
-        files!,
-        AIR_SHAFT_BUCKET_NAME,
-        'airshafts'
-      );
-
-    res.status(201).json({
-      success: true,
-      message:
-        'Air shaft images uploaded successfully',
-      data: {
-        images: uploadedImages
-      }
-    });
+export const uploadGalleryMedia = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const files = req.files as Express.Multer.File[] | undefined;
+    const error = validateFiles(files, GALLERY_TYPES, 'media');
+    if (error) { res.status(400).json({ success: false, message: error }); return; }
+    const data = await uploadFiles(files!, GALLERY_BUCKET_NAME, 'gallery');
+    res.status(201).json({ success: true, data });
   } catch (error) {
-    console.error(
-      'Air shaft image upload error:',
-      error
-    );
-
-    res.status(500).json({
-      success: false,
-      message:
-        error instanceof Error
-          ? error.message
-          : 'Internal server error'
-    });
+    console.error('Gallery media upload error:', error);
+    res.status(500).json({ success: false, message: error instanceof Error ? error.message : 'Internal server error' });
   }
 };
