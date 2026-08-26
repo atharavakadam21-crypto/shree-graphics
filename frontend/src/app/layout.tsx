@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Playfair_Display, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import "./globals.css";
+import "./public-theme.css";
 import Assistant from "@/components/public/assistant/Assistant";
 import MotionProvider from "@/components/public/MotionProvider";
 import PublicTheme from "@/components/public/PublicTheme";
