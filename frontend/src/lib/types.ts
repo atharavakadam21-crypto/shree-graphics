@@ -5,4 +5,5 @@ export interface Admin { id: string; email: string; role: 'admin'; }
 export interface AirShaft { id: string; name: string; slug: string; type: string | null; short_description: string | null; description: string | null; specifications: Record<string, unknown>; images: string[]; featured: boolean; is_active: boolean; created_at: string; updated_at: string; }
 export type GalleryCategory = 'machine' | 'airshaft' | 'spare_part' | 'exhibition';
 export type GalleryMediaType = 'image' | 'video';
-export interface GalleryItem { id: string; category: GalleryCategory; media_type: GalleryMediaType; media_url: string; thumbnail_url: string | null; title: string | null; sort_order: number; is_active: boolean; created_at: string; updated_at: string; }
+export interface GalleryItem { id: string; category: GalleryCategory; event_id: string | null; media_type: GalleryMediaType; media_url: string; thumbnail_url: string | null; title: string | null; sort_order: number; is_active: boolean; created_at: string; updated_at: string; }
+export interface GalleryEvent { id: string; name: string; slug: string; description: string | null; cover_url: string | null; sort_order: number; is_active: boolean; created_at: string; updated_at: string; }
